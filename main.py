@@ -7,15 +7,30 @@ def build_grid(puzzle):
     for i in range(0,9):
         row = []
         for j in range(0,9):
-            row.append(puzzle[input_position])
+            element = puzzle[input_position]
+            if (element != ' '):
+                row.append(element)
+            else:
+                row.append(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
             input_position += 1
         output.append(row)
     return output
 
+def unsolved(element):
+    return len(element) > 1
+
 def print_grid(grid):
     for i in range(0,9):
+        if (i != 0 and i % 3 == 0):
+            print("-----------")
         for j in range(0,9):
-            print(grid[i][j], end='')
+            if (j != 0 and j % 3 == 0):
+                print('|', end='')
+            element = grid[i][j]
+            if unsolved(element):
+                print('?', end='')
+            else:
+                print(element[0], end='')
         print()
 
 grid = build_grid(PUZZLE_INPUT)
