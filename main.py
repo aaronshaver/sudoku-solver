@@ -16,7 +16,7 @@ def build_grid(puzzle):
         output.append(row)
     return output
 
-def unsolved(element):
+def is_unsolved(element):
     return len(element) > 1
 
 def print_grid(grid):
@@ -27,7 +27,7 @@ def print_grid(grid):
             if (j != 0 and j % 3 == 0):
                 print('|', end='')
             element = grid[i][j]
-            if unsolved(element):
+            if is_unsolved(element):
                 print('?', end='')
             else:
                 print(element[0], end='')
