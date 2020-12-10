@@ -1,3 +1,4 @@
+# "easy" puzzle according to Funster 1,000+ Sudoku Puzzles
 PUZZLE_INPUT = "  2 5 1  56     898 31 62 52 7   6 8   2 3   4 8   3 19 47 58 318     72  5 6 9  "
 
 def build_grid(puzzle):
@@ -33,5 +34,16 @@ def print_grid(grid):
                 print(element[0], end='')
         print()
 
+def count_all(grid):
+    """ counts both solved and unsolved candidate numbers
+    closer to 81 is better; 729 is theoretical max but unlikely
+    """
+    total = 0
+    for i in range(0,9):
+        for j in range(0,9):
+            total += len(grid[i][j])
+    return total
+
 grid = build_grid(PUZZLE_INPUT)
 print_grid(grid)
+print('\n', count_all(grid))
