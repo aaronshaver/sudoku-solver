@@ -1,4 +1,5 @@
-# input format is top left to top right, then down a row, etc. -- so 0,0 to 8,8
+# input format is starting upper left, do left to right whole row,
+# then additional rows top to bottom
 
 # "easy" puzzle #13 from Funster 1,000+ Sudoku Puzzles
 PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
@@ -14,6 +15,7 @@ def build_grid(puzzle):
             if (element != ' '):
                 row.append([element])
             else:
+                # basically we create ALL the "pencil marks"/candidates for all empty spaces
                 row.append(['1', '2', '3', '4', '5', '6', '7', '8', '9'])
             input_position += 1
         output.append(row)
@@ -59,7 +61,7 @@ def get_row(row_num, grid):
     return row
 
 def cull_by_known_columns(grid):
-    """ reduces initial candidates by eliminating based on initial, known numbers """
+    """ reduces initial candidates by eliminating based on initial, known numbers by column scanning """
     for column_num in range(0,9):
         column = get_column(column_num, grid)
         for row_num in range(0,9):
@@ -71,7 +73,7 @@ def cull_by_known_columns(grid):
     return grid
 
 def cull_by_known_rows(grid):
-    """ reduces initial candidates by eliminating based on initial, known numbers """
+    """ reduces initial candidates by eliminating based on initial, known numbers by row scanning """
     for row_num in range(0,9):
         row = get_row(row_num, grid)
         for column_num in range(0,9):
