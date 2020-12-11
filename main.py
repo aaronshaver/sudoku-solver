@@ -1,5 +1,7 @@
-# "easy" puzzle according to Funster 1,000+ Sudoku Puzzles
-PUZZLE_INPUT = "  2 5 1  56     898 31 62 52 7   6 8   2 3   4 8   3 19 47 58 318     72  5 6 9  "
+# input format is top left to top right, then down a row, etc. -- so 0,0 to 8,8
+
+# "easy" puzzle #13 from Funster 1,000+ Sudoku Puzzles
+PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
 
 def build_grid(puzzle):
     output = []
@@ -10,15 +12,15 @@ def build_grid(puzzle):
         for j in range(0,9):
             element = puzzle[input_position]
             if (element != ' '):
-                row.append(element)
+                row.append([element])
             else:
-                row.append(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+                row.append(['1', '2', '3', '4', '5', '6', '7', '8', '9'])
             input_position += 1
         output.append(row)
     return output
 
-def is_unsolved(element):
-    return len(element) > 1
+def is_solved(element):
+    return len(element) == 1
 
 def print_grid(grid):
     for i in range(0,9):
@@ -28,7 +30,7 @@ def print_grid(grid):
             if (j != 0 and j % 3 == 0):
                 print('|', end='')
             element = grid[i][j]
-            if is_unsolved(element):
+            if not is_solved(element):
                 print('?', end='')
             else:
                 print(element[0], end='')
@@ -44,6 +46,45 @@ def count_all(grid):
             total += len(grid[i][j])
     return total
 
+def get_column(column_num, grid):
+    column = []
+    for row_num in range (0,9):
+        column.append(grid[row_num][column_num])
+    return column
+
+def get_row(row_num, grid):
+    row = []
+    for column_num in range (0,9):
+        row.append(grid[row_num][column_num])
+    return row
+
+def cull_by_known_columns(grid):
+    """ reduces initial candidates by eliminating based on initial, known numbers """
+    for column_num in range(0,9):
+        column = get_column(column_num, grid)
+        for row_num in range(0,9):
+            current_element = grid[row_num][column_num]
+            if not is_solved(current_element):
+                solved_elements = [x for x in column if is_solved(x)]
+                for solved in solved_elements:
+                    grid[row_num][column_num].remove(solved[0])
+    return grid
+
+def cull_by_known_rows(grid):
+    """ reduces initial candidates by eliminating based on initial, known numbers """
+    for row_num in range(0,9):
+        row = get_row(row_num, grid)
+        for column_num in range(0,9):
+            current_element = grid[row_num][column_num]
+            if not is_solved(current_element):
+                solved_elements = [x for x in row if is_solved(x)]
+                for solved in solved_elements:
+                    if solved[0] in current_element:
+                        grid[row_num][column_num].remove(solved[0])
+    return grid
+
 grid = build_grid(PUZZLE_INPUT)
+grid = cull_by_known_columns(grid)
+grid = cull_by_known_rows(grid)
 print_grid(grid)
 print('\n', count_all(grid))
