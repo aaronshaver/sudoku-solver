@@ -42,6 +42,7 @@ def print_grid(grid):
             else:
                 print(element[0], end='')
         print()
+    print('\nTotal candidate numbers / "pencil marks":', get_num_candidates(grid))
     print('\nUnsolved squares:', get_num_unsolved_squares(grid))
 
 def get_num_unsolved_squares(grid):
@@ -50,6 +51,15 @@ def get_num_unsolved_squares(grid):
         for j in range(0,9):
             if not is_solved(grid[i][j]):
                 total += 1
+    return total
+
+def get_num_candidates(grid):
+    total = 0
+    for i in range(0,9):
+        for j in range(0,9):
+            element = grid[i][j]
+            if not is_solved(element):
+                total += len(element)
     return total
 
 def get_column(column_num, grid):
@@ -118,9 +128,12 @@ def cull_by_known_blocks(grid):
 
 grid = build_grid(PUZZLE_INPUT)
 print_grid(grid)
+
 grid = cull_by_known_columns(grid)
-grid = cull_by_known_rows(grid)
-grid = cull_by_known_blocks(grid)
 print_grid(grid)
+
 grid = cull_by_known_rows(grid)
+print_grid(grid)
+
+grid = cull_by_known_blocks(grid)
 print_grid(grid)
