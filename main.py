@@ -60,6 +60,14 @@ def get_row(row_num, grid):
         row.append(grid[row_num][column_num])
     return row
 
+def get_block(ul_row_num, ul_col_num, grid):
+    """ ul_ params are the upper left row and column numbers """
+    output = []
+    for col_modifier in range(0,3):
+        for row_modifier in range(0,3):
+            output.append(grid[ul_col_num + col_modifier][ul_row_num + row_modifier])
+    return output
+
 def cull_by_known_columns(grid):
     """ reduces initial candidates by eliminating based on initial, known numbers by column scanning """
     for column_num in range(0,9):
@@ -86,8 +94,7 @@ def cull_by_known_rows(grid):
     return grid
 
 def cull_by_known_blocks(grid):
-    # NOT YET IMPLEMENTED
-    # need a get_block function first...
+#tbd
     return grid
 
 grid = build_grid(PUZZLE_INPUT)
