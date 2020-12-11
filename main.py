@@ -4,6 +4,8 @@
 # "easy" puzzle #13 from Funster 1,000+ Sudoku Puzzles
 PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
 
+given_numbers = 0
+
 def build_grid(puzzle):
     output = []
     input_position = 0
@@ -14,6 +16,8 @@ def build_grid(puzzle):
             element = puzzle[input_position]
             if (element != ' '):
                 row.append([element])
+                global given_numbers
+                given_numbers += 1
             else:
                 # basically we create ALL the "pencil marks"/candidates for all empty spaces
                 row.append(['1', '2', '3', '4', '5', '6', '7', '8', '9'])
@@ -25,6 +29,7 @@ def is_solved(element):
     return len(element) == 1
 
 def print_grid(grid):
+    print()
     for i in range(0,9):
         if (i != 0 and i % 3 == 0):
             print("-----------")
@@ -38,14 +43,12 @@ def print_grid(grid):
                 print(element[0], end='')
         print()
 
-def count_all(grid):
-    """ counts both solved and unsolved candidate numbers
-    closer to 81 is better; 729 is theoretical max but unlikely
-    """
+def get_num_unsolved_squares(grid):
     total = 0
     for i in range(0,9):
         for j in range(0,9):
-            total += len(grid[i][j])
+            if not is_solved(grid[i][j]):
+                total += 1
     return total
 
 def get_column(column_num, grid):
@@ -93,8 +96,23 @@ def cull_by_known_rows(grid):
                         grid[row_num][column_num].remove(solved[0])
     return grid
 
+def get_block_coords(row_num, col_num):
+    """ returns the upper left coordinates of the block in which the input coords exist """
+    return [row_num - (row_num % 3), col_num - (col_num % 3)]
+
 def cull_by_known_blocks(grid):
-#tbd
+    """ reduces initial candidates by eliminating based on initial, known numbers by block scanning """
+    for row_num in range(0,9):
+        for column_num in range(0,9):
+            current_element = grid[row_num][column_num]
+            if not is_solved(current_element):
+                block_coords = get_block_coords(row_num, column_num)
+                current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
+                # refactoring candidate:
+                solved_elements = [x for x in current_block if is_solved(x)]
+                for solved in solved_elements:
+                    if solved[0] in current_element:
+                        grid[row_num][column_num].remove(solved[0])
     return grid
 
 grid = build_grid(PUZZLE_INPUT)
@@ -102,4 +120,4 @@ grid = cull_by_known_columns(grid)
 grid = cull_by_known_rows(grid)
 grid = cull_by_known_blocks(grid)
 print_grid(grid)
-print('\n', count_all(grid))
+print('\nUnsolved squares:', get_num_unsolved_squares(grid))
