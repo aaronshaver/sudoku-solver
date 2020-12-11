@@ -42,6 +42,7 @@ def print_grid(grid):
             else:
                 print(element[0], end='')
         print()
+    print('\nUnsolved squares:', get_num_unsolved_squares(grid))
 
 def get_num_unsolved_squares(grid):
     total = 0
@@ -68,7 +69,7 @@ def get_block(ul_row_num, ul_col_num, grid):
     output = []
     for col_modifier in range(0,3):
         for row_modifier in range(0,3):
-            output.append(grid[ul_col_num + col_modifier][ul_row_num + row_modifier])
+            output.append(grid[ul_row_num + row_modifier][ul_col_num + col_modifier])
     return output
 
 def cull_by_known_columns(grid):
@@ -108,7 +109,7 @@ def cull_by_known_blocks(grid):
             if not is_solved(current_element):
                 block_coords = get_block_coords(row_num, column_num)
                 current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
-                # refactoring candidate:
+                # refactoring candidate (repeated code):
                 solved_elements = [x for x in current_block if is_solved(x)]
                 for solved in solved_elements:
                     if solved[0] in current_element:
@@ -116,8 +117,10 @@ def cull_by_known_blocks(grid):
     return grid
 
 grid = build_grid(PUZZLE_INPUT)
+print_grid(grid)
 grid = cull_by_known_columns(grid)
 grid = cull_by_known_rows(grid)
 grid = cull_by_known_blocks(grid)
 print_grid(grid)
-print('\nUnsolved squares:', get_num_unsolved_squares(grid))
+grid = cull_by_known_rows(grid)
+print_grid(grid)
