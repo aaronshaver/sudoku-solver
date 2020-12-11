@@ -85,8 +85,14 @@ def cull_by_known_rows(grid):
                         grid[row_num][column_num].remove(solved[0])
     return grid
 
+def cull_by_known_blocks(grid):
+    # NOT YET IMPLEMENTED
+    # need a get_block function first...
+    return grid
+
 grid = build_grid(PUZZLE_INPUT)
 grid = cull_by_known_columns(grid)
 grid = cull_by_known_rows(grid)
+grid = cull_by_known_blocks(grid)
 print_grid(grid)
 print('\n', count_all(grid))
