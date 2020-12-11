@@ -2,7 +2,13 @@
 # then additional rows top to bottom
 
 # "easy" puzzle #13 from Funster 1,000+ Sudoku Puzzles
-PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
+# PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
+
+# "medium" puzzle #150 from Funster 1,000+ Sudoku Puzzles
+PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
+
+# "hard" puzzle #330 from Funster 1,000+ Sudoku Puzzles
+# PUZZLE_INPUT = "15 23         45    2   9  2  7   566  321  979   6  8  9   1    64         57 42"
 
 given_numbers = 0
 
@@ -42,7 +48,6 @@ def print_grid(grid):
             else:
                 print(element[0], end='')
         print()
-    print('\nTotal candidate numbers / "pencil marks":', get_num_candidates(grid))
     print('\nUnsolved squares:', get_num_unsolved_squares(grid))
 
 def get_num_unsolved_squares(grid):
@@ -83,6 +88,7 @@ def get_block(ul_row_num, ul_col_num, grid):
     return output
 
 def cull_by_known_columns(grid):
+    # ought to refactor this and its sister methods: most of the code is the same
     """ reduces initial candidates by eliminating based on initial, known numbers by column scanning """
     for column_num in range(0,9):
         column = get_column(column_num, grid)
@@ -91,7 +97,11 @@ def cull_by_known_columns(grid):
             if not is_solved(current_element):
                 solved_elements = [x for x in column if is_solved(x)]
                 for solved in solved_elements:
-                    grid[row_num][column_num].remove(solved[0])
+                    solved_value = solved[0]
+                    if solved_value in current_element:
+                        grid[row_num][column_num].remove(solved_value)
+                        if is_solved(grid[row_num][column_num]):
+                            print(grid[row_num][column_num][0], end='')
     return grid
 
 def cull_by_known_rows(grid):
@@ -103,8 +113,11 @@ def cull_by_known_rows(grid):
             if not is_solved(current_element):
                 solved_elements = [x for x in row if is_solved(x)]
                 for solved in solved_elements:
-                    if solved[0] in current_element:
-                        grid[row_num][column_num].remove(solved[0])
+                    solved_value = solved[0]
+                    if solved_value in current_element:
+                        grid[row_num][column_num].remove(solved_value)
+                        if is_solved(grid[row_num][column_num]):
+                            print(grid[row_num][column_num][0], end='')
     return grid
 
 def get_block_coords(row_num, col_num):
@@ -119,21 +132,24 @@ def cull_by_known_blocks(grid):
             if not is_solved(current_element):
                 block_coords = get_block_coords(row_num, column_num)
                 current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
-                # refactoring candidate (repeated code):
                 solved_elements = [x for x in current_block if is_solved(x)]
                 for solved in solved_elements:
-                    if solved[0] in current_element:
-                        grid[row_num][column_num].remove(solved[0])
+                    solved_value = solved[0]
+                    if solved_value in current_element:
+                        grid[row_num][column_num].remove(solved_value)
+                        if is_solved(grid[row_num][column_num]):
+                            print(grid[row_num][column_num][0], end='')
     return grid
 
 grid = build_grid(PUZZLE_INPUT)
+print('\nOriginal puzzle:')
 print_grid(grid)
 
-grid = cull_by_known_columns(grid)
-print_grid(grid)
+print('\nReal-time display of new solved squares:')
+while get_num_unsolved_squares(grid) > 0:
+    grid = cull_by_known_columns(grid)
+    grid = cull_by_known_rows(grid)
+    grid = cull_by_known_blocks(grid)
 
-grid = cull_by_known_rows(grid)
-print_grid(grid)
-
-grid = cull_by_known_blocks(grid)
+print('\n\nSolved puzzle:')
 print_grid(grid)
