@@ -1,3 +1,5 @@
+from itertools import chain
+
 # input format is starting upper left, do left to right whole row,
 # then additional rows top to bottom
 
@@ -52,6 +54,32 @@ def print_grid(grid):
                 print(element[0], end='')
         print()
     print('\nUnsolved squares:', get_num_unsolved_squares(grid))
+
+def get_other_rows_cols_solved(row_num, col_num, grid):
+    """ for a given coordinate square, get solved numbers from the the four other rows (2) and columns (2)
+    that radiate from its 3x3 block """
+
+    # I have a feeling there's a more clever way to do this but I'm tired
+    lookup_table = {
+        0: [1,2],
+        1: [0,2],
+        2: [0,1],
+        3: [4,5],
+        4: [3,5],
+        5: [3,4],
+        6: [7,8],
+        7: [6,8],
+        8: [6,7]
+    }
+    rows_to_check = lookup_table[row_num]
+    cols_to_check = lookup_table[col_num]
+
+    all_solved = []
+    all_solved.append([x for x in get_row(rows_to_check[0], grid) if is_solved(x)])
+    all_solved.append([x for x in get_row(rows_to_check[1], grid) if is_solved(x)])
+    all_solved.append([x for x in get_column(cols_to_check[0], grid) if is_solved(x)])
+    all_solved.append([x for x in get_column(cols_to_check[1], grid) if is_solved(x)])
+    return [x[0] for x in list(chain.from_iterable(all_solved))]  # wow this is ugly
 
 def get_num_unsolved_squares(grid):
     total = 0
@@ -144,6 +172,41 @@ def cull_by_known_blocks(grid):
                             print(grid[row_num][column_num][0], end='')
     return grid
 
+def get_four_count_nums(candidates):
+    collector = {}
+    for num in candidates:
+        if num not in collector.keys():
+            collector[num] = 1
+        else:
+            old_value = collector[num]
+            collector[num] = old_value + 1
+    output = []
+    for key, value in collector.items():
+        if value == 4:
+            output.append(key)
+    return output
+
+def cull_by_four_cross_lines(grid):
+    # TODO: there's a weird loop or something in this function
+    """ for each square, get solved numbers from the four other rows (2) and columns (2)
+    that radiate from its 3x3 block, and use that to look for a solved number """
+    for row_num in range(0,9):
+        for column_num in range(0,9):
+            current_element = grid[row_num][column_num]
+            if not is_solved(current_element):
+                candidates = get_other_rows_cols_solved(row_num, column_num, grid)
+                fours = get_four_count_nums(candidates)
+                if (len(fours) == 1):
+                    block_coords = get_block_coords(row_num, column_num)
+                    candidate = fours[0]
+                    current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
+                    solved_elements = [x for x in current_block if is_solved(x)]
+                    if [candidate] not in solved_elements:
+                        grid[row_num][column_num] = [candidate]
+                        if is_solved(grid[row_num][column_num]):
+                            print(grid[row_num][column_num][0], end='')
+    return grid
+
 grid = build_grid(PUZZLE_INPUT)
 print('\nOriginal puzzle:')
 print_grid(grid)
@@ -153,6 +216,7 @@ while get_num_unsolved_squares(grid) > 0:
     grid = cull_by_known_columns(grid)
     grid = cull_by_known_rows(grid)
     grid = cull_by_known_blocks(grid)
+    grid = cull_by_four_cross_lines(grid)
 
 print('\n\nSolved puzzle:')
 print_grid(grid)
