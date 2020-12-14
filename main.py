@@ -131,8 +131,6 @@ def cull_by_known_columns(grid):
                     solved_value = solved[0]
                     if solved_value in current_element:
                         grid[row_num][column_num].remove(solved_value)
-                        if is_solved(grid[row_num][column_num]):
-                            print(grid[row_num][column_num][0], end='')
     return grid
 
 def cull_by_known_rows(grid):
@@ -147,8 +145,6 @@ def cull_by_known_rows(grid):
                     solved_value = solved[0]
                     if solved_value in current_element:
                         grid[row_num][column_num].remove(solved_value)
-                        if is_solved(grid[row_num][column_num]):
-                            print(grid[row_num][column_num][0], end='')
     return grid
 
 def get_block_coords(row_num, col_num):
@@ -168,8 +164,6 @@ def cull_by_known_blocks(grid):
                     solved_value = solved[0]
                     if solved_value in current_element:
                         grid[row_num][column_num].remove(solved_value)
-                        if is_solved(grid[row_num][column_num]):
-                            print(grid[row_num][column_num][0], end='')
     return grid
 
 def get_four_count_nums(candidates):
@@ -203,15 +197,12 @@ def cull_by_four_cross_lines(grid):
                     solved_elements = [x for x in current_block if is_solved(x)]
                     if [candidate] not in solved_elements:
                         grid[row_num][column_num] = [candidate]
-                        if is_solved(grid[row_num][column_num]):
-                            print(grid[row_num][column_num][0], end='')
     return grid
 
 grid = build_grid(PUZZLE_INPUT)
 print('\nOriginal puzzle:')
 print_grid(grid)
 
-print('\nReal-time display of new solved squares:')
 while get_num_unsolved_squares(grid) > 0:
     grid = cull_by_known_columns(grid)
     grid = cull_by_known_rows(grid)
