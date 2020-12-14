@@ -188,6 +188,7 @@ def cull_by_four_cross_lines(grid):
         for column_num in range(0,9):
             current_element = grid[row_num][column_num]
             if not is_solved(current_element):
+                print('element row, col ', row_num, column_num, 'is not solved')
                 candidates = get_other_rows_cols_solved(row_num, column_num, grid)
                 fours = get_four_count_nums(candidates)
                 if (len(fours) == 1):
