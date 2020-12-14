@@ -7,10 +7,10 @@ from itertools import chain
 # PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
 
 # "medium" puzzle #150 from Funster 1,000+ Sudoku Puzzles
-# PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
+PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
 
 # "hard" puzzle #150 from Funster 1,000+ Sudoku Puzzles
-PUZZLE_INPUT = " 4  9 8 6926           692 6 9  5      914      6  5 7 937           7198 5 4  6 "
+#PUZZLE_INPUT = " 4  9 8 6926           692 6 9  5      914      6  5 7 937           7198 5 4  6 "
 
 # "hard" puzzle #330 from Funster 1,000+ Sudoku Puzzles
 # PUZZLE_INPUT = "15 23         45    2   9  2  7   566  321  979   6  8  9   1    64         57 42"
@@ -216,7 +216,8 @@ while get_num_unsolved_squares(grid) > 0:
     grid = cull_by_known_columns(grid)
     grid = cull_by_known_rows(grid)
     grid = cull_by_known_blocks(grid)
-    grid = cull_by_four_cross_lines(grid)
+    # there's a glitch in this so turn off until I can get to it next week:
+    #grid = cull_by_four_cross_lines(grid)
 
 print('\n\nSolved puzzle:')
 print_grid(grid)
