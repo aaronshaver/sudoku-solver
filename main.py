@@ -43,7 +43,7 @@ def print_grid(grid):
     print()
     for i in range(0,9):
         if (i != 0 and i % 3 == 0):
-            print("-----------")
+            print("--- --- ---")
         for j in range(0,9):
             if (j != 0 and j % 3 == 0):
                 print('|', end='')
