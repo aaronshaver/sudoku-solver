@@ -1,13 +1,22 @@
 from itertools import chain
 
-# input format is starting upper left, do left to right whole row,
-# then additional rows top to bottom
+# ****************************************************************************
+# INPUT FORMAT:
+# input format is: starting from upper left, do left to right the whole row,
+# then additional rows top to bottom in this way, ending in lower right
+# ****************************************************************************
 
 # "easy" puzzle #13 from Funster 1,000+ Sudoku Puzzles
 # PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
 
 # "medium" puzzle #150 from Funster 1,000+ Sudoku Puzzles
-PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
+#PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
+
+# "medium" puzzle #342 from Funster 1,000+ Sudoku Puzzles
+# PUZZLE_INPUT = " 16   2  98   1       451  3  4  8     3 8     5  2  3  351       6   97  7   56 "
+
+# "medium" puzzle #341 from Funster 1,000+ Sudoku Puzzles
+PUZZLE_INPUT = "5 873 2 6       95     4  7   2 7 53 7  6  2 26 3 8   9  6     38       1 6 738 2"
 
 # "hard" puzzle #150 from Funster 1,000+ Sudoku Puzzles
 # PUZZLE_INPUT = " 4  9 8 6926           692 6 9  5      914      6  5 7 937           7198 5 4  6 "
