@@ -7,10 +7,10 @@ from itertools import chain
 # PUZZLE_INPUT = "3    2697 8    32     6   843 79 1 2  6 4 9  7 1 23 649   3     63    4 2579    6"
 
 # "medium" puzzle #150 from Funster 1,000+ Sudoku Puzzles
-PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
+# PUZZLE_INPUT = " 82 6   7 4   1  99  4  6   9  8     3 692 8     1  7   8  7  33  2   5 7   3 82 "
 
 # "hard" puzzle #150 from Funster 1,000+ Sudoku Puzzles
-#PUZZLE_INPUT = " 4  9 8 6926           692 6 9  5      914      6  5 7 937           7198 5 4  6 "
+PUZZLE_INPUT = " 4  9 8 6926           692 6 9  5      914      6  5 7 937           7198 5 4  6 "
 
 # "hard" puzzle #330 from Funster 1,000+ Sudoku Puzzles
 # PUZZLE_INPUT = "15 23         45    2   9  2  7   566  321  979   6  8  9   1    64         57 42"
@@ -43,13 +43,13 @@ def print_grid(grid):
     print()
     for i in range(0,9):
         if (i != 0 and i % 3 == 0):
-            print("--- --- ---")
+            print("░░░░░░░░░░░")
         for j in range(0,9):
             if (j != 0 and j % 3 == 0):
-                print('|', end='')
+                print('░', end='')
             element = grid[i][j]
             if not is_solved(element):
-                print('?', end='')
+                print('.', end='')
             else:
                 print(element[0], end='')
         print()
@@ -98,16 +98,16 @@ def get_num_candidates(grid):
                 total += len(element)
     return total
 
-def get_column(column_num, grid):
+def get_column(col_num, grid):
     column = []
     for row_num in range (0,9):
-        column.append(grid[row_num][column_num])
+        column.append(grid[row_num][col_num])
     return column
 
 def get_row(row_num, grid):
     row = []
-    for column_num in range (0,9):
-        row.append(grid[row_num][column_num])
+    for col_num in range (0,9):
+        row.append(grid[row_num][col_num])
     return row
 
 def get_block(ul_row_num, ul_col_num, grid):
@@ -121,30 +121,30 @@ def get_block(ul_row_num, ul_col_num, grid):
 def cull_by_known_columns(grid):
     # ought to refactor this and its sister methods: most of the code is the same
     """ reduces initial candidates by eliminating based on initial, known numbers by column scanning """
-    for column_num in range(0,9):
-        column = get_column(column_num, grid)
+    for col_num in range(0,9):
+        column = get_column(col_num, grid)
         for row_num in range(0,9):
-            current_element = grid[row_num][column_num]
+            current_element = grid[row_num][col_num]
             if not is_solved(current_element):
                 solved_elements = [x for x in column if is_solved(x)]
                 for solved in solved_elements:
                     solved_value = solved[0]
                     if solved_value in current_element:
-                        grid[row_num][column_num].remove(solved_value)
+                        grid[row_num][col_num].remove(solved_value)
     return grid
 
 def cull_by_known_rows(grid):
     """ reduces initial candidates by eliminating based on initial, known numbers by row scanning """
     for row_num in range(0,9):
         row = get_row(row_num, grid)
-        for column_num in range(0,9):
-            current_element = grid[row_num][column_num]
+        for col_num in range(0,9):
+            current_element = grid[row_num][col_num]
             if not is_solved(current_element):
                 solved_elements = [x for x in row if is_solved(x)]
                 for solved in solved_elements:
                     solved_value = solved[0]
                     if solved_value in current_element:
-                        grid[row_num][column_num].remove(solved_value)
+                        grid[row_num][col_num].remove(solved_value)
     return grid
 
 def get_block_coords(row_num, col_num):
@@ -154,19 +154,22 @@ def get_block_coords(row_num, col_num):
 def cull_by_known_blocks(grid):
     """ reduces initial candidates by eliminating based on initial, known numbers by block scanning """
     for row_num in range(0,9):
-        for column_num in range(0,9):
-            current_element = grid[row_num][column_num]
+        for col_num in range(0,9):
+            current_element = grid[row_num][col_num]
             if not is_solved(current_element):
-                block_coords = get_block_coords(row_num, column_num)
+                block_coords = get_block_coords(row_num, col_num)
                 current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
                 solved_elements = [x for x in current_block if is_solved(x)]
                 for solved in solved_elements:
                     solved_value = solved[0]
                     if solved_value in current_element:
-                        grid[row_num][column_num].remove(solved_value)
+                        grid[row_num][col_num].remove(solved_value)
     return grid
 
-def get_four_count_nums(candidates):
+def get_four_count_nums(candidates, disallowed_nums):
+    """ if there are four of a given number in the rows and columns not shared by the square
+    under test, and the number isn't already in the block, that number has to be in the square
+    under test (I think) """
     collector = {}
     for num in candidates:
         if num not in collector.keys():
@@ -176,28 +179,27 @@ def get_four_count_nums(candidates):
             collector[num] = old_value + 1
     output = []
     for key, value in collector.items():
-        if value == 4:
+        if value == 4 and [key] not in disallowed_nums:
             output.append(key)
     return output
 
 def cull_by_four_cross_lines(grid):
-    # TODO: there's a weird loop or something in this function
-    """ for each square, get solved numbers from the four other rows (2) and columns (2)
-    that radiate from its 3x3 block, and use that to look for a solved number """
+    """ for each square, get solved numbers from the four other rows (2 of them) and columns (2 of them)
+    that radiate from its 3x3 block, and use that to see if there's a provably-correct solved square """
     for row_num in range(0,9):
-        for column_num in range(0,9):
-            current_element = grid[row_num][column_num]
+        for col_num in range(0,9):
+            current_element = grid[row_num][col_num]
             if not is_solved(current_element):
-                print('element row, col ', row_num, column_num, 'is not solved')
-                candidates = get_other_rows_cols_solved(row_num, column_num, grid)
-                fours = get_four_count_nums(candidates)
-                if (len(fours) == 1):
-                    block_coords = get_block_coords(row_num, column_num)
-                    candidate = fours[0]
-                    current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
-                    solved_elements = [x for x in current_block if is_solved(x)]
-                    if [candidate] not in solved_elements:
-                        grid[row_num][column_num] = [candidate]
+                candidates = get_other_rows_cols_solved(row_num, col_num, grid)
+                # need to remove numbers already in block from the candidates, because there can be
+                # cases where the number of "four numbers" is more than one
+                # there's likely a more efficient way to do this, of course
+                block_coords = get_block_coords(row_num, col_num)
+                solved_current_block = get_block(ul_row_num=block_coords[0], ul_col_num=block_coords[1], grid=grid)
+                disallowed_nums = [x for x in solved_current_block if is_solved(x)]
+                fours = get_four_count_nums(candidates, disallowed_nums)
+                if len(fours) == 1:
+                    grid[row_num][col_num] = [fours[0]]
     return grid
 
 grid = build_grid(PUZZLE_INPUT)
@@ -208,8 +210,8 @@ while get_num_unsolved_squares(grid) > 0:
     grid = cull_by_known_columns(grid)
     grid = cull_by_known_rows(grid)
     grid = cull_by_known_blocks(grid)
-    # there's a glitch in this so turn off until I can get to it next week:
-    #grid = cull_by_four_cross_lines(grid)
+    grid = cull_by_four_cross_lines(grid)
+    print_grid(grid)
 
 print('\n\nSolved puzzle:')
 print_grid(grid)
