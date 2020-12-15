@@ -24,6 +24,9 @@ PUZZLE_INPUT = "5 873 2 6       95     4  7   2 7 53 7  6  2 26 3 8   9  6     3
 # "hard" puzzle #330 from Funster 1,000+ Sudoku Puzzles
 # PUZZLE_INPUT = "15 23         45    2   9  2  7   566  321  979   6  8  9   1    64         57 42"
 
+# supposedly the world's hardest sudoku by Finnish mathematician Arto Inkala
+# PUZZLE_INPUT = "8          36      7  9 2   5   7       457     1   3   1    68  85   1  9    4  "
+
 given_numbers = 0
 
 def build_grid(puzzle):
