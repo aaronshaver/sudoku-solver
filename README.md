@@ -1,6 +1,6 @@
 # sudoku-solver
 
-_[Warning: Dirty code ahead! I did this project over a few afternoons just to satisfy my curiosity. I wanted to see how far I could get without looking up any algorithms on the Internet. Since it was just for fun, I didn't bother with things like unit tests, performance optimizations, parameterized configuration, clean code refactoring, etc.]_
+_[Warning: Dirty code ahead! I did this project over a few afternoons just to satisfy my curiosity. I wanted to see how far I could get without looking up any algorithms on the Internet. Since it was just for fun, I didn't bother with things like unit tests, performance optimizations, parameterized configuration, clean code refactoring, etc. Of those things, though, I wish I had done TDD -- it would have saved me so much time when I ran into glitches. Lesson re-learned.]_
 
 Note: While the program can solve a lot of sudoku puzzles (including all the medium difficulty ones I've thrown at it from a puzzle book I sourced from), it still has trouble with some of the hardest puzzles.
 
